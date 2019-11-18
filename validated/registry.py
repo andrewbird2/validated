@@ -13,11 +13,12 @@ class Test(object):
         self.cls = cls
 
 
-for cls in apps.get_models():
-    for name, method in inspect.getmembers(cls, predicate=inspect.isfunction):
-        if hasattr(method, 'is_model_test') and method.is_model_test:
-            model_tests[cls].append(
-                Test(method, method.test_method, cls))
+def get_model_tests():
+    for cls in apps.get_models():
+        for name, method in inspect.getmembers(cls, predicate=inspect.isfunction):
+            if hasattr(method, 'is_model_test') and method.is_model_test:
+                model_tests[cls].append(
+                    Test(method, method.test_method, cls))
 
 
 # Used as a decorator
