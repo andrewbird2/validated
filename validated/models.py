@@ -12,6 +12,10 @@ class TestMethod(models.Model):
     method_name = models.CharField(max_length=256)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
 
+    def save(self, *args, **kwargs):
+        return super(TestMethod, self).save(*args, **kwargs)
+
+
 
 class TestResult(TimeStampedModel):
     test_method = models.ForeignKey(TestMethod, on_delete=models.CASCADE)
