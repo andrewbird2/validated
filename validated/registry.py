@@ -1,32 +1,32 @@
 import inspect
-from collections import defaultdict
 
 from django.apps import apps
+from django.contrib.contenttypes.models import ContentType
 
-model_tests = defaultdict(list)
-
-
-class Test(object):
-    def __init__(self, method, test_method, cls):
-        self.test_method = test_method
-        self.method = method
-        self.cls = cls
+from validated.models import TestMethod
 
 
-def get_model_tests():
+def populate_test_methods():
     for cls in apps.get_models():
         for name, method in inspect.getmembers(cls, predicate=inspect.isfunction):
             if hasattr(method, 'is_model_test') and method.is_model_test:
-                model_tests[cls].append(
-                    Test(method, method.test_method, cls))
+                print(method)
+                content_type = ContentType.objects.get_for_model(cls)
+                tm, created = TestMethod.objects.update_or_create(
+                    content_type=content_type,
+                    method_name=method.__name__,
+                    defaults={
+                        'title': method.model_test_title or method.__name__.replace('_', ' ').capitalize(),
+                        'is_class_method': method.is_class_method
+                    }
+                )
 
 
 # Used as a decorator
-def test_method(title=None, queryset=None, is_class_method=False):
+def test_method(title=None, is_class_method=False):
     def test_method_inner(method):
         method.is_model_test = True
         method.is_class_method = is_class_method
-        method.queryset = queryset
         method.model_test_title = title
         return method
 

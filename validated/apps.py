@@ -6,5 +6,6 @@ class ValidatedConfig(AppConfig):
     name = 'validated'
 
     def ready(self):
-        from .registry import get_model_tests
-        get_model_tests()
+        print(1)
+        from .registry import populate_test_methods
+        populate_test_methods()
