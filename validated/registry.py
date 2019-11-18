@@ -10,7 +10,6 @@ def populate_test_methods():
     for cls in apps.get_models():
         for name, method in inspect.getmembers(cls, predicate=inspect.isfunction):
             if hasattr(method, 'is_model_test') and method.is_model_test:
-                print(method)
                 content_type = ContentType.objects.get_for_model(cls)
                 tm, created = TestMethod.objects.update_or_create(
                     content_type=content_type,
